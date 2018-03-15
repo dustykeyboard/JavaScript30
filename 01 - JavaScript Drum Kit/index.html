@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
@@ -57,32 +59,36 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
+  <script>
+    function playAudioForKeyCode(keyCode) {
+      const key = document.querySelector(`.key[data-key="${keyCode}"]`)
+      const audio = document.querySelector(`audio[data-key="${keyCode}"]`)
+      if (!key || !audio) return
+      key.classList.add('playing')
+      audio.cloneNode().play()
+    }
 
-function playAudioForKeyCode(keyCode) {
-  try{
-  document.querySelector(`.key[data-key="${keyCode}"]`).classList.add('playing')
-  document.querySelector(`audio[data-key="${keyCode}"]`).cloneNode().play()
-  } catch(err) {}
-}
+    function resetKey(keyCode) {
+      const key = document.querySelector(`.key[data-key="${keyCode}"]`)
+      if (!key) return
+      key.classList.remove('playing')
+    }
 
-window.addEventListener('load', () => {
-  console.log('window.onload')
-  window.addEventListener('keydown', ({keyCode}) => {
-    playAudioForKeyCode(keyCode)
-  })
-  const keys = Array.from(document.querySelectorAll('.key'))
-  keys.forEach(key => {
-    key.addEventListener('mousedown', () => playAudioForKeyCode(key.getAttribute('data-key')))
-    key.addEventListener('transitionend', ({propertyName}) => {
-      if (propertyName === 'transform') key.classList.remove('playing')
+    window.addEventListener('load', () => {
+      window.addEventListener('keydown', ({ keyCode }) => playAudioForKeyCode(keyCode))
+      window.addEventListener('keyup', ({ keyCode }) => resetKey(keyCode))
+
+      Array.from(document.querySelectorAll('.key')).forEach(key => {
+        key.addEventListener('mousedown', () => playAudioForKeyCode(key.getAttribute('data-key')))
+        key.addEventListener('transitionend', ({ propertyName }) => {
+          if (propertyName === 'transform') key.classList.remove('playing')
+        })
+        key.addEventListener('mouseup', () => key.classList.remove('playing'))
+      })
     })
-    key.addEventListener('keyup', () => key.classList.remove('playing'))
-    key.addEventListener('mouseup', () => key.classList.remove('playing'))
-  })
-})
-</script>
+  </script>
 
 
 </body>
+
 </html>
