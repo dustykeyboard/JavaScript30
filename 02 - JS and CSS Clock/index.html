@@ -105,13 +105,11 @@
         ]
 
       if (seconds < 1) {
-        console.log('disable seconds animation')
         hands.seconds.classList.add('noanimate')
         hands.seconds.style.transform = `rotate(-6deg)`
       }
       
       setTimeout(function(){
-        console.log('enable seconds animation')
         hands.seconds.classList.remove('noanimate')
         hands.hours.style.transform = `rotate(${(hours * 30) + (minutes / 2)}deg)`
         hands.minutes.style.transform = `rotate(${(minutes * 6) + (seconds / 10)}deg)`
