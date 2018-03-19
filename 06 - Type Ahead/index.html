@@ -26,13 +26,17 @@ function findMatches(wordToMatch, cities) {
   return cities.filter(place => place.city.match(regex) || place.state.match(regex))
 }
 
+function highlightMatches(wordToMatch, label) {
+  const regex = new RegExp(wordToMatch, 'gi')
+  return label.replace(regex, `<span class="hl">${wordToMatch}</span>`)
+}
+
 function displayMatches(e) {
   const matches = findMatches(searchInput.value, cities)
-  resultHTML = ''
-  matches.forEach(({rank, city, state}) => {
-    resultHTML += `<li value="${rank}">${city}, ${state}</li>`
-  })
-  searchResult.innerHTML = resultHTML
+  searchResult.innerHTML = matches.map(({population, city, state}) => `<li value="${population}">
+    <span class="name">${highlightMatches(searchInput.value, city + ', ' + state)}</span>
+    <span class="population">${Number(population).toLocaleString()}</span>
+    </li>`).join('')
 }
 
 const searchInput = document.querySelector('.search')
