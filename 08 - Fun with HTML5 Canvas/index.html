@@ -13,25 +13,38 @@
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-    const context = canvas.getContext('2d')
-    context.strokeStyle = '#ff8800'
-    context.lineJoin = 'round'
-    context.lineCap = 'round'
+    const ctx = canvas.getContext('2d')
+    ctx.strokeStyle = '#ff8800'
+    ctx.lineJoin = 'round'
+    ctx.lineCap = 'round'
+    ctx.lineWidth = 5
 
     let isDrawing = false
-    let last = { offsetX: 0, offsetY: 0 }
+    let last = { hue: 0 }
+
+    const distance = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
+      X = Math.abs(x1 - x2)
+      Y = Math.abs(y1 - y2)
+      const H = Math.sqrt(X * X + Y * Y)
+      return H
+    }
 
     const draw = ({ offsetX: x, offsetY: y }) => {
       if (!isDrawing) return
-      context.beginPath()
-      context.moveTo(last.x, last.y)
-      context.lineTo(x, y)
-      context.stroke()
-      last = { x, y }
+
+      const { x: lastX, y: lastY, hue } = last
+      ctx.lineWidth = Math.log(Math.max(1, distance(last, { x, y })))
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+      ctx.beginPath()
+      ctx.moveTo(lastX, lastY)
+      ctx.lineTo(x, y)
+      ctx.stroke()
+
+      last = Object.assign({}, last, { x, y, hue: hue + 1 })
     }
 
     const startDrawing = ({ offsetX: x, offsetY: y }) => {
-      last = { x, y }
+      last = Object.assign({}, last, { x, y })
       isDrawing = true
     }
 
